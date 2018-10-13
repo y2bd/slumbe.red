@@ -37,6 +37,8 @@
         }
 
         #autoclick {
+            display: none;
+
             color: white;
             position: absolute;
             bottom: 8%;
@@ -88,15 +90,11 @@
                 this.ctx1.drawImage(this.video, 0, 0, 32, 32);
                 let frame = this.ctx1.getImageData(0, 0, 32, 32);
 
-                let r = frame.data[0] / 4;
-                let g = frame.data[1] / 4;
-                let b = frame.data[2] / 4;
+                let r = frame.data[0];
+                let g = frame.data[1];
+                let b = frame.data[2];
 
-                console.log(r, g, b);
-
-                let a = (r + g + b) / 3;
-
-
+                let a = (r + g + b) / 16;
 
                 this.ctx1.fillStyle = 'rgb(' + a + ', ' + a + ', ' + a + ')';
                 this.ctx1.fillRect(0, 0, 16, 16);
@@ -107,7 +105,7 @@
 
 <body onload="processor.doLoad()">
     <div class="video-container">
-        <audio loop>
+        <audio autoplay loop>
             <source src="ass/royksopp_smol.mp3" type="audio/mp3">
         </audio>
         <video id="video" autoplay loop muted playsinline>
@@ -116,15 +114,19 @@
         </video>
         <canvas id="canv" width="16" height="16"></canvas>
     </div>
-    <div id="autoclick">
+    <div id="autoclick" style="display: none">
         ｃｌｉｃｋｔｏｄｉｅｉｎｓｔａｎｔｌｙ
     </div>
 
     <script type="text/javascript">
         let audio = document.getElementsByTagName('audio')[0];
-        if (audio.paused || audio.currentTime === 0) {
-            document.getElementById("autoclick").style.display = "block";
-        }
+
+        this.setTimeout(() => {
+            if (audio.paused || audio.currentTime === 0) {
+                document.getElementById("autoclick").style.display = "block";
+                console.log("i was told to stop");
+            }
+        }, 3000);
     </script>
 </body>
 
