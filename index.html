@@ -9,6 +9,9 @@
 
     <style>
         body {
+            margin: 0 auto;
+            padding: 0 auto;
+
             background: black;
             overflow: hidden;
         }
@@ -22,7 +25,8 @@
         }
 
         video {
-            height: 80vh;
+            max-height: 80vh;
+            max-width: 80%;
         }
 
         #canv {
@@ -31,11 +35,30 @@
             width: 100vw;
             height: 100vh;
         }
+
+        #autoclick {
+            color: white;
+            position: absolute;
+            bottom: 8%;
+            left: 0%;
+            right: 0%;
+            font-family: monospace;
+
+            text-align: center
+        }
     </style>
 
     <script type="text/javascript">
         document.addEventListener('touchstart', function () {
-            document.getElementsByTagName('audio')[0].play();
+            document.getElementsByTagName('audio')[0] &&
+                document.getElementsByTagName('audio')[0].play();
+            document.getElementById("autoclick").style.display = "none";
+        });
+
+        document.addEventListener('click', function () {
+            document.getElementsByTagName('audio')[0] &&
+                document.getElementsByTagName('audio')[0].play();
+            document.getElementById("autoclick").style.display = "none";
         });
 
         let processor = {
@@ -49,7 +72,10 @@
             },
             timerCallback: function timerCallback() {
                 if (this.video.paused || this.video.ended) {
-                    return;
+                    console.log("ended");
+                    setTimeout(function () {
+                        self.timerCallback();
+                    }, 2000);
                 }
 
                 this.computeFrame();
@@ -66,7 +92,11 @@
                 let g = frame.data[1] / 4;
                 let b = frame.data[2] / 4;
 
+                console.log(r, g, b);
+
                 let a = (r + g + b) / 3;
+
+
 
                 this.ctx1.fillStyle = 'rgb(' + a + ', ' + a + ', ' + a + ')';
                 this.ctx1.fillRect(0, 0, 16, 16);
@@ -77,7 +107,7 @@
 
 <body onload="processor.doLoad()">
     <div class="video-container">
-        <audio autoplay loop>
+        <audio loop>
             <source src="ass/royksopp_smol.mp3" type="audio/mp3">
         </audio>
         <video id="video" autoplay loop muted playsinline>
@@ -86,6 +116,16 @@
         </video>
         <canvas id="canv" width="16" height="16"></canvas>
     </div>
+    <div id="autoclick">
+        ｃｌｉｃｋｔｏｄｉｅｉｎｓｔａｎｔｌｙ
+    </div>
+
+    <script type="text/javascript">
+        let audio = document.getElementsByTagName('audio')[0];
+        if (audio.paused || audio.currentTime === 0) {
+            document.getElementById("autoclick").style.display = "block";
+        }
+    </script>
 </body>
 
 </html>
